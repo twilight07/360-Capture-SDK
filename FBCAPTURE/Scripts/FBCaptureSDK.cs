@@ -6,11 +6,13 @@ using System.IO;
 using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine.Rendering;
-using UnityEngine.VR;
+using UnityEngine.XR;
 
-namespace FBCapture {
+namespace FBCapture
+{
     [RequireComponent(typeof(Camera))]
-    public class FBCaptureSDK : MonoBehaviour {
+    public class FBCaptureSDK : MonoBehaviour
+    {
 
         #region CAPTURE SDK
 
@@ -145,7 +147,7 @@ namespace FBCapture {
         private static extern FBCAPTURE_STATUS fbc_saveScreenShot(IntPtr texturePtr);
         [DllImport("FBCapture", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
         private static extern GRAPHICS_CARD fbc_checkGPUManufacturer();
-        
+
 
         private const int ERROR_VIDEO_ENCODING_CAUSE_ERRORS = 100;
         private const int ERROR_AUDIO_ENCODING_CAUSE_ERRORS = 200;
@@ -156,7 +158,8 @@ namespace FBCapture {
         private const int ERROR_SYSTEM_ERRORS = 700;
         private const int ERROR_ENCODING_CAPABILITY = 800;
 
-        public enum FBCAPTURE_STATUS {
+        public enum FBCAPTURE_STATUS
+        {
             // Common error codes
             OK = 0,
             FBCAPTURE_STATUS_ENCODE_IS_NOT_READY,
@@ -276,40 +279,47 @@ namespace FBCapture {
             FBCAPTURE_STATUS_UNSUPPORTED_OS_PROCESSOR,
         }
 
-        public enum VRDEVICE_TYPE {
+        public enum VRDEVICE_TYPE
+        {
             UNKNOWN,
             OCULUS_RIFT,
             HTC_VIVE,
         }
 
-        public enum STEREO_MODE {
+        public enum STEREO_MODE
+        {
             SM_NONE,
             SM_TOP_BOTTOM,
             SM_LEFT_RIGHT
         }
 
-        public enum PROJECTION_TYPE {
+        public enum PROJECTION_TYPE
+        {
             NONE,
             EQUIRECT,
             CUBEMAP
         }
 
-        public enum GRAPHICS_CARD {
+        public enum GRAPHICS_CARD
+        {
             NVIDIA,
             AMD,
             UNSUPPORTED_DEVICE
         }
 
-        public enum CAPTURE_MODE {
+        public enum CAPTURE_MODE
+        {
             _360_CAPTURE,
             NON_360_CAPTURE,
         }
-        public enum CAPTURE_TEXTURE_FORMAT {
+        public enum CAPTURE_TEXTURE_FORMAT
+        {
             RGB_CAPTURE,
             RGBD_CAPTURE,
         }
 
-        public enum CAPTURE_TYPE {
+        public enum CAPTURE_TYPE
+        {
             NONE,
             LIVE,
             VOD,
@@ -317,25 +327,29 @@ namespace FBCapture {
             SCREENSHOT
         }
 
-        public enum VIDEO_CAPTURE_TYPE {
+        public enum VIDEO_CAPTURE_TYPE
+        {
             VOD,
             LIVE,
         }
 
-        public enum RESOLUTION_PRESET {
+        public enum RESOLUTION_PRESET
+        {
             CUSTOM,
             _720P,
             _1080P,
             _4K,
         }
 
-        public enum CAPTURE_STATUS {
+        public enum CAPTURE_STATUS
+        {
             STARTING,
             RUNNING,
             STOPPED
         }
 
-        public enum CAPTURE_ERROR {
+        public enum CAPTURE_ERROR
+        {
             UNSUPPORTED_SPEC,
             VOD_FAILED_TO_START,
             LIVE_FAILED_TO_START,
@@ -413,7 +427,7 @@ namespace FBCapture {
 
         //    Callback for error handling
         public delegate void OnStatusCallback(CAPTURE_ERROR error, FBCAPTURE_STATUS? captureStatus);
-        public event OnStatusCallback OnError = delegate {};
+        public event OnStatusCallback OnError = delegate { };
 
         // Private Members
         private bool captureStarted = false;
@@ -449,9 +463,11 @@ namespace FBCapture {
         [Tooltip("Scale spherical coordinates (flip equirect, usually just 1 or -1)")]
         private Vector2 sphereScale = new Vector2(1, -1);
 
-        void Awake() {
+        void Awake()
+        {
 
-            if (singleton != null) {
+            if (singleton != null)
+            {
                 Debug.LogError("There are multiple instances of FBCaptureSDK.");
                 return;
             }
@@ -469,57 +485,77 @@ namespace FBCapture {
             OnError += CaptureStatusLog;
 
             // Live video preset
-            if (liveVideoPreset == RESOLUTION_PRESET._720P) {
+            if (liveVideoPreset == RESOLUTION_PRESET._720P)
+            {
                 liveVideoWidth = 1280;
                 liveVideoHeight = 720;
                 liveVideoBitRate = 2000000;
-            } else if (liveVideoPreset == RESOLUTION_PRESET._1080P) {
+            }
+            else if (liveVideoPreset == RESOLUTION_PRESET._1080P)
+            {
                 liveVideoWidth = 1920;
                 liveVideoHeight = 1080;
                 liveVideoBitRate = 4000000;
-            } else if (liveVideoPreset == RESOLUTION_PRESET._4K) {
+            }
+            else if (liveVideoPreset == RESOLUTION_PRESET._4K)
+            {
                 liveVideoWidth = 4096;
                 liveVideoHeight = 2048;
                 liveVideoBitRate = 10000000;
             }
 
             // VOD video preset
-            if (vodVideoPreset == RESOLUTION_PRESET._720P) {
+            if (vodVideoPreset == RESOLUTION_PRESET._720P)
+            {
                 vodVideoWidth = 1280;
                 vodVideoHeight = 720;
                 vodVideoBitRate = 2000000;
-            } else if (vodVideoPreset == RESOLUTION_PRESET._1080P) {
+            }
+            else if (vodVideoPreset == RESOLUTION_PRESET._1080P)
+            {
                 vodVideoWidth = 1920;
                 vodVideoHeight = 1080;
                 vodVideoBitRate = 4000000;
-            } else if (vodVideoPreset == RESOLUTION_PRESET._4K) {
+            }
+            else if (vodVideoPreset == RESOLUTION_PRESET._4K)
+            {
                 vodVideoWidth = 4096;
                 vodVideoHeight = 2048;
                 vodVideoBitRate = 10000000;
             }
 
             // Screenshot video preset
-            if (screenshotPreset == RESOLUTION_PRESET._720P) {
+            if (screenshotPreset == RESOLUTION_PRESET._720P)
+            {
                 screenShotWidth = 1280;
                 screenShotHeight = 720;
-            } else if (screenshotPreset == RESOLUTION_PRESET._1080P) {
+            }
+            else if (screenshotPreset == RESOLUTION_PRESET._1080P)
+            {
                 screenShotWidth = 1920;
                 screenShotHeight = 1080;
-            } else if (screenshotPreset == RESOLUTION_PRESET._4K) {
+            }
+            else if (screenshotPreset == RESOLUTION_PRESET._4K)
+            {
                 screenShotWidth = 4096;
                 screenShotHeight = 2048;
             }
 
             // Preview video preset
-            if (previewVideoPreset == RESOLUTION_PRESET._720P) {
+            if (previewVideoPreset == RESOLUTION_PRESET._720P)
+            {
                 previewVideoWidth = 1280;
                 previewVideoHeight = 720;
                 previewVideoBitRate = 2000000;
-            } else if (previewVideoPreset == RESOLUTION_PRESET._1080P) {
+            }
+            else if (previewVideoPreset == RESOLUTION_PRESET._1080P)
+            {
                 previewVideoWidth = 1920;
                 previewVideoHeight = 1080;
                 previewVideoBitRate = 4000000;
-            } else if (previewVideoPreset == RESOLUTION_PRESET._4K) {
+            }
+            else if (previewVideoPreset == RESOLUTION_PRESET._4K)
+            {
                 previewVideoWidth = 4096;
                 previewVideoHeight = 2048;
                 previewVideoBitRate = 10000000;
@@ -527,52 +563,72 @@ namespace FBCapture {
 
             // Retrieve attached VR devie for sound and microphone capture in VR
             // If expected VR device is not attached, it will capture default audio device
-            string vrDeviceName = VRDevice.model.ToLower();
-            if (vrDeviceName.Contains("rift")) {
+            string vrDeviceName = XRDevice.model.ToLower();
+            if (vrDeviceName.Contains("rift"))
+            {
                 attachedHMD = VRDEVICE_TYPE.OCULUS_RIFT;
-            } else if (vrDeviceName.Contains("vive")) {
+            }
+            else if (vrDeviceName.Contains("vive"))
+            {
                 attachedHMD = VRDEVICE_TYPE.HTC_VIVE;
-            } else {
+            }
+            else
+            {
                 attachedHMD = VRDEVICE_TYPE.UNKNOWN;
             }
         }
 
-        void Update() {
+        void Update()
+        {
             // Input interface for start/stop encoding and screenshot
-            if (Input.GetKeyDown(startEncoding)) {
-                if (videoCaptureType == VIDEO_CAPTURE_TYPE.LIVE) {
+            if (Input.GetKeyDown(startEncoding))
+            {
+                if (videoCaptureType == VIDEO_CAPTURE_TYPE.LIVE)
+                {
                     StartLiveStreaming(liveStreamUrl);
-                } else if (videoCaptureType == VIDEO_CAPTURE_TYPE.VOD) {
+                }
+                else if (videoCaptureType == VIDEO_CAPTURE_TYPE.VOD)
+                {
                     StartVodCapture();
                 }
-            } else if (Input.GetKeyDown(stopEncoding)) {
+            }
+            else if (Input.GetKeyDown(stopEncoding))
+            {
                 StopCapture();
-            } else if (Input.GetKeyDown(startScreenShot)) {
+            }
+            else if (Input.GetKeyDown(startScreenShot))
+            {
                 SaveScreenShot(screenShotWidth, screenShotHeight);
             }
 
             if (!captureStarted && !screenshotStarted) return;
 
-            if (updateCubemap && captureMode == CAPTURE_MODE._360_CAPTURE) {  // Render rgb cubemap
-                if (cubemapCamera) {
+            if (updateCubemap && captureMode == CAPTURE_MODE._360_CAPTURE)
+            {  // Render rgb cubemap
+                if (cubemapCamera)
+                {
                     cubemapCamera.transform.position = transform.position;
                     cubemapCamera.RenderToCubemap(cubemapTexture);
                 }
 
-                if (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE && depthCubemapCamera) {  // Render depth cubemap
+                if (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE && depthCubemapCamera)
+                {  // Render depth cubemap
                     depthCubemapCamera.transform.position = transform.position;
                     depthCubemapCamera.RenderToCubemap(depthCubemapTexture);
                 }
             }
 
-            if (screenshotStarted) {
+            if (screenshotStarted)
+            {
                 screenshotReady = true;
             }
 
             FBCAPTURE_STATUS status;
-            if (outputTexture && captureStarted) {
+            if (outputTexture && captureStarted)
+            {
                 status = fbc_captureTexture(outputTexture.GetNativeTexturePtr());  // Passing render texture to FBCaptureSDK
-                if (status != FBCAPTURE_STATUS.OK) {
+                if (status != FBCAPTURE_STATUS.OK)
+                {
                     OnError(CAPTURE_ERROR.TEXTURE_ENCODE_FAILED, status);
                     StopCapture();
                     return;
@@ -584,47 +640,59 @@ namespace FBCapture {
         /// Configuration for Live Streaming 
         /// </summary>
         /// <param name="streamUrl">live stream key</param>
-        public bool StartLiveStreaming(string streamUrl) {
+        public bool StartLiveStreaming(string streamUrl)
+        {
             FBCAPTURE_STATUS status = FBCAPTURE_STATUS.OK;
 
             non360Camera.enabled = true;
             depthCubemapCamera.enabled = true;
             cubemapCamera.enabled = true;
 
-            if (captureStarted || fbc_getCaptureStatus() != FBCAPTURE_STATUS.OK) {
+            if (captureStarted || fbc_getCaptureStatus() != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.CAPTURE_ALREADY_IN_PROGRESS, null);
                 return false;
             }
 
-            if (string.IsNullOrEmpty(streamUrl)) {
+            if (string.IsNullOrEmpty(streamUrl))
+            {
                 OnError(CAPTURE_ERROR.INVALID_STREAM_URI, null);
                 return false;
             }
 
             if ((projectionType != PROJECTION_TYPE.EQUIRECT && captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE) ||
-                (captureMode == CAPTURE_MODE.NON_360_CAPTURE && captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE)) {
+                (captureMode == CAPTURE_MODE.NON_360_CAPTURE && captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE))
+            {
                 Debug.Log("We only support RGB-D capture with equirect projection type and suruound capture mode");
                 captureTextureFormat = CAPTURE_TEXTURE_FORMAT.RGB_CAPTURE;
             }
 
-            if (captureMode == CAPTURE_MODE._360_CAPTURE && projectionType == PROJECTION_TYPE.NONE) {
+            if (captureMode == CAPTURE_MODE._360_CAPTURE && projectionType == PROJECTION_TYPE.NONE)
+            {
                 Debug.Log("ProjectionType should be set for 360 capture. " +
                           "We want to set type to equirect for generating texture properly");
                 projectionType = PROJECTION_TYPE.EQUIRECT;
-            } else if (captureMode == CAPTURE_MODE.NON_360_CAPTURE) {  // Non 360 capture doesn't have projection type
+            }
+            else if (captureMode == CAPTURE_MODE.NON_360_CAPTURE)
+            {  // Non 360 capture doesn't have projection type
                 projectionType = PROJECTION_TYPE.NONE;
             }
 
             // Live video preset
-            if (liveVideoPreset == RESOLUTION_PRESET._720P) {
+            if (liveVideoPreset == RESOLUTION_PRESET._720P)
+            {
                 liveVideoWidth = 1280;
                 liveVideoHeight = 720;
                 liveVideoBitRate = 2000000;
-            } else if (liveVideoPreset == RESOLUTION_PRESET._1080P) {
+            }
+            else if (liveVideoPreset == RESOLUTION_PRESET._1080P)
+            {
                 liveVideoWidth = 1920;
                 liveVideoHeight = 1080;
                 liveVideoBitRate = 4000000;
-            } else if (liveVideoPreset == RESOLUTION_PRESET._4K) {
+            }
+            else if (liveVideoPreset == RESOLUTION_PRESET._4K)
+            {
                 liveVideoWidth = 4096;
                 liveVideoHeight = 2048;
                 liveVideoBitRate = 10000000;
@@ -632,7 +700,8 @@ namespace FBCapture {
 
             // Check hardware capability for live video encoding
             status = fbc_getCaptureCapability();
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.UNSUPPORTED_SPEC, status);
                 return false;
             }
@@ -640,19 +709,24 @@ namespace FBCapture {
             // MAX video encoding resolution
             // AMD:     4096 x 2048
             // NVIDIA:  4096 x 4096
-            if (GRAPHICS_CARD.AMD == fbc_checkGPUManufacturer() && 
-                (liveVideoWidth > 4096 || 
-                (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE ? liveVideoHeight * 2 : liveVideoHeight) > 2048)) {
+            if (GRAPHICS_CARD.AMD == fbc_checkGPUManufacturer() &&
+                (liveVideoWidth > 4096 ||
+                (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE ? liveVideoHeight * 2 : liveVideoHeight) > 2048))
+            {
                 Debug.Log("Max video encoding resolution on AMD is 4096 x 2048");
                 OnError(CAPTURE_ERROR.UNSUPPORTED_SPEC, null);
                 return false;
-            } else if (GRAPHICS_CARD.NVIDIA == fbc_checkGPUManufacturer() && 
-                       (liveVideoWidth > 4096 ||
-                       (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE ? liveVideoHeight * 2 : liveVideoHeight) > 4096)) {
+            }
+            else if (GRAPHICS_CARD.NVIDIA == fbc_checkGPUManufacturer() &&
+                     (liveVideoWidth > 4096 ||
+                     (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE ? liveVideoHeight * 2 : liveVideoHeight) > 4096))
+            {
                 Debug.Log("Max video encoding resolution on NVIDIA is 4096 x 4096");
                 OnError(CAPTURE_ERROR.UNSUPPORTED_SPEC, null);
                 return false;
-            } else if (GRAPHICS_CARD.UNSUPPORTED_DEVICE == fbc_checkGPUManufacturer()) {
+            }
+            else if (GRAPHICS_CARD.UNSUPPORTED_DEVICE == fbc_checkGPUManufacturer())
+            {
                 Debug.Log("Unsupported gpu device or you missed to call fbc_getCaptureCapability supporting gpu device check");
                 OnError(CAPTURE_ERROR.UNSUPPORTED_SPEC, null);
                 return false;
@@ -660,7 +734,7 @@ namespace FBCapture {
 
             // Create RenderTextures which will be used for live video encoding
             CreateRenderTextures(liveVideoWidth, liveVideoHeight);
-           
+
             // Video Encoding and Live Configuration Settings
             status = fbc_setLiveCaptureSettings(
                             width: outputWidth,
@@ -675,34 +749,39 @@ namespace FBCapture {
                             horizontalFlip: false,
                             projectionType: projectionType,
                             stereoMode: STEREO_MODE.SM_NONE);
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.LIVE_FAILED_TO_START, status);
                 return false;
             }
 
             // Pick attached audio device resources for audio capture
             status = fbc_setMicAndAudioRenderDeviceByVRDeviceType(attachedHMD);
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.LIVE_FAILED_TO_START, status);
                 return false;
             }
 
             // Make enable audio output capture(ex. speaker)
             status = fbc_setAudioEnabledDuringCapture(enabledAudioCapture);
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.LIVE_FAILED_TO_START, status);
                 return false;
             }
 
             // Make enable audio input capture(ex. microphone)
             status = fbc_setMicEnabledDuringCapture(enabledMicCapture);
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.LIVE_FAILED_TO_START, status);
                 return false;
             }
 
             status = fbc_startLiveCapture();
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.LIVE_FAILED_TO_START, status);
                 return false;
             }
@@ -714,42 +793,53 @@ namespace FBCapture {
         /// <summary>
         /// Configuration for Video Recording
         /// </summary>
-        public bool StartVodCapture() {
+        public bool StartVodCapture()
+        {
             FBCAPTURE_STATUS status = FBCAPTURE_STATUS.OK;
 
             non360Camera.enabled = true;
             depthCubemapCamera.enabled = true;
             cubemapCamera.enabled = true;
 
-            if (captureStarted || fbc_getCaptureStatus() != FBCAPTURE_STATUS.OK) {
+            if (captureStarted || fbc_getCaptureStatus() != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.CAPTURE_ALREADY_IN_PROGRESS, null);
                 return false;
             }
 
             if ((projectionType != PROJECTION_TYPE.EQUIRECT && captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE) ||
-                (captureMode == CAPTURE_MODE.NON_360_CAPTURE && captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE)) {
+                (captureMode == CAPTURE_MODE.NON_360_CAPTURE && captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE))
+            {
                 Debug.Log("We only support RGB-D capture with equirect projection type and 360 capture mode");
                 captureTextureFormat = CAPTURE_TEXTURE_FORMAT.RGB_CAPTURE;
             }
 
-            if (captureMode == CAPTURE_MODE._360_CAPTURE && projectionType == PROJECTION_TYPE.NONE) {
+            if (captureMode == CAPTURE_MODE._360_CAPTURE && projectionType == PROJECTION_TYPE.NONE)
+            {
                 Debug.Log("ProjectionType should be set for 360 capture. " +
                           "We want to set type to equirect for generating texture properly");
                 projectionType = PROJECTION_TYPE.EQUIRECT;
-            } else if (captureMode == CAPTURE_MODE.NON_360_CAPTURE) {  // Non 360 capture doesn't have projection type
+            }
+            else if (captureMode == CAPTURE_MODE.NON_360_CAPTURE)
+            {  // Non 360 capture doesn't have projection type
                 projectionType = PROJECTION_TYPE.NONE;
             }
 
             // VOD video preset
-            if (vodVideoPreset == RESOLUTION_PRESET._720P) {
+            if (vodVideoPreset == RESOLUTION_PRESET._720P)
+            {
                 vodVideoWidth = 1280;
                 vodVideoHeight = 720;
                 vodVideoBitRate = 2000000;
-            } else if (vodVideoPreset == RESOLUTION_PRESET._1080P) {
+            }
+            else if (vodVideoPreset == RESOLUTION_PRESET._1080P)
+            {
                 vodVideoWidth = 1920;
                 vodVideoHeight = 1080;
                 vodVideoBitRate = 4000000;
-            } else if (vodVideoPreset == RESOLUTION_PRESET._4K) {
+            }
+            else if (vodVideoPreset == RESOLUTION_PRESET._4K)
+            {
                 vodVideoWidth = 4096;
                 vodVideoHeight = 2048;
                 vodVideoBitRate = 10000000;
@@ -757,7 +847,8 @@ namespace FBCapture {
 
             // Check hardware capability for video encoding
             status = fbc_getCaptureCapability();
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.VOD_FAILED_TO_START, status);
                 return false;
             }
@@ -767,17 +858,22 @@ namespace FBCapture {
             // NVIDIA:  4096 x 4096
             if (GRAPHICS_CARD.AMD == fbc_checkGPUManufacturer() &&
                 (vodVideoWidth > 4096 ||
-                (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE ? vodVideoHeight * 2 : vodVideoHeight) > 2048)) {
+                (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE ? vodVideoHeight * 2 : vodVideoHeight) > 2048))
+            {
                 Debug.Log("Max video encoding resolution on AMD is 4096 x 2048");
                 OnError(CAPTURE_ERROR.UNSUPPORTED_SPEC, null);
                 return false;
-            } else if (GRAPHICS_CARD.NVIDIA == fbc_checkGPUManufacturer() &&
-                       (vodVideoWidth > 4096 ||
-                       (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE ? vodVideoHeight * 2 : vodVideoHeight) > 4096)) {
+            }
+            else if (GRAPHICS_CARD.NVIDIA == fbc_checkGPUManufacturer() &&
+                     (vodVideoWidth > 4096 ||
+                     (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE ? vodVideoHeight * 2 : vodVideoHeight) > 4096))
+            {
                 Debug.Log("Max video encoding resolution on NVIDIA is 4096 x 4096");
                 OnError(CAPTURE_ERROR.UNSUPPORTED_SPEC, null);
                 return false;
-            } else if (GRAPHICS_CARD.UNSUPPORTED_DEVICE == fbc_checkGPUManufacturer()) {
+            }
+            else if (GRAPHICS_CARD.UNSUPPORTED_DEVICE == fbc_checkGPUManufacturer())
+            {
                 Debug.Log("Unsupported gpu device or you missed to call fbc_getCaptureCapability supporting gpu device check");
                 OnError(CAPTURE_ERROR.UNSUPPORTED_SPEC, null);
                 return false;
@@ -788,12 +884,15 @@ namespace FBCapture {
 
             // If we haven't set the save path, we want to use project folder and timestamped file name by default
             string savePath;
-            if (string.IsNullOrEmpty(fullVodSavePath)) {
+            if (string.IsNullOrEmpty(fullVodSavePath))
+            {
                 savePath = string.Format("{0}/movie_{1}x{2}_{3}.mp4",
                     Directory.GetCurrentDirectory(),
                     vodVideoWidth, captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE ? outputHeight * 2 : outputHeight,
                     DateTime.Now.ToString("yyyy-MM-dd hh_mm_ss"));
-            } else {
+            }
+            else
+            {
                 savePath = fullVodSavePath;
             }
 
@@ -809,35 +908,40 @@ namespace FBCapture {
                           horizontalFlip: captureMode == CAPTURE_MODE._360_CAPTURE ? true : false,
                           projectionType: projectionType,
                           stereoMode: STEREO_MODE.SM_NONE);
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.VOD_FAILED_TO_START, status);
                 return false;
             }
 
             // Pick attached audio device resources for audio capture
             status = fbc_setMicAndAudioRenderDeviceByVRDeviceType(attachedHMD);
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.VOD_FAILED_TO_START, status);
                 return false;
             }
 
             // Make enable audio output capture(ex. speaker)
             status = fbc_setAudioEnabledDuringCapture(enabledAudioCapture);
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.VOD_FAILED_TO_START, status);
                 return false;
             }
 
             // Make enable audio input capture(ex. microphone)
             status = fbc_setMicEnabledDuringCapture(enabledMicCapture);
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.VOD_FAILED_TO_START, status);
                 return false;
             }
 
             // Start VOD capture
             status = fbc_startVodCapture();
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.VOD_FAILED_TO_START, status);
                 return false;
             }
@@ -851,7 +955,8 @@ namespace FBCapture {
         /// </summary>
         /// <param name="width">  Screenshot resolution - width </param>
         /// <param name="height"> Screenshot resolution - height </param>
-        public bool SaveScreenShot(int width, int height) {
+        public bool SaveScreenShot(int width, int height)
+        {
             FBCAPTURE_STATUS status;
 
             non360Camera.enabled = true;
@@ -861,37 +966,46 @@ namespace FBCapture {
             // Check current screenshot status.
             // It should return FBCAPTURE_STATUS.OK when it's not in progress
             status = fbc_getScreenshotStatus();
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.CAPTURE_ALREADY_IN_PROGRESS, null);
                 return false;
             }
 
             if ((projectionType != PROJECTION_TYPE.EQUIRECT && captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE) ||
-                (captureMode == CAPTURE_MODE.NON_360_CAPTURE && captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE)) {
+                (captureMode == CAPTURE_MODE.NON_360_CAPTURE && captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE))
+            {
                 Debug.Log("We only support RGB-D capture with equirect projection type and suruound capture mode");
                 captureTextureFormat = CAPTURE_TEXTURE_FORMAT.RGB_CAPTURE;
             }
 
-            if (captureMode == CAPTURE_MODE._360_CAPTURE && projectionType == PROJECTION_TYPE.NONE) {
+            if (captureMode == CAPTURE_MODE._360_CAPTURE && projectionType == PROJECTION_TYPE.NONE)
+            {
                 Debug.Log("ProjectionType should be set for 360 capture. " +
                           "We want to set type to equirect for generating texture properly");
                 projectionType = PROJECTION_TYPE.EQUIRECT;
             }
 
             // Screenshot video preset
-            if (screenshotPreset == RESOLUTION_PRESET._720P) {
+            if (screenshotPreset == RESOLUTION_PRESET._720P)
+            {
                 screenShotWidth = 1280;
                 screenShotHeight = 720;
-            } else if (screenshotPreset == RESOLUTION_PRESET._1080P) {
+            }
+            else if (screenshotPreset == RESOLUTION_PRESET._1080P)
+            {
                 screenShotWidth = 1920;
                 screenShotHeight = 1080;
-            } else if (screenshotPreset == RESOLUTION_PRESET._4K) {
+            }
+            else if (screenshotPreset == RESOLUTION_PRESET._4K)
+            {
                 screenShotWidth = 3840;
                 screenShotHeight = 2160;
             }
 
             // In the sample, we only allow to use same resolution with video encoding WHEN video encoding is started
-            if (captureStarted && screenShotWidth != outputWidth && screenShotHeight != outputHeight) {
+            if (captureStarted && screenShotWidth != outputWidth && screenShotHeight != outputHeight)
+            {
                 screenShotWidth = outputWidth;
                 screenShotHeight = outputHeight;
             }
@@ -901,18 +1015,22 @@ namespace FBCapture {
 
             // If we haven't set the save path, we want to use project folder and timestamped file name by default
             string savePath;
-            if (string.IsNullOrEmpty(fullScreenshotSavePath)) {
+            if (string.IsNullOrEmpty(fullScreenshotSavePath))
+            {
                 savePath = string.Format("{0}/movie_{1}x{2}_{3}.jpg",
                     Directory.GetCurrentDirectory(),
                     outputWidth, captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE ? outputHeight * 2 : outputHeight,
                     DateTime.Now.ToString("yyyy-MM-dd hh_mm_ss"));
-            } else {
+            }
+            else
+            {
                 savePath = fullScreenshotSavePath;
             }
 
             // Check hardware capability for screenshot
             status = fbc_getCaptureCapability();
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.SCREENSHOT_FAILED_TO_START, status);
                 return false;
             }
@@ -928,7 +1046,8 @@ namespace FBCapture {
 
             // Start ScreenShot
             status = fbc_startScreenshot();
-            if (status != FBCAPTURE_STATUS.OK) {
+            if (status != FBCAPTURE_STATUS.OK)
+            {
                 OnError(CAPTURE_ERROR.SCREENSHOT_FAILED_TO_START, status);
                 return false;
             }
@@ -942,38 +1061,46 @@ namespace FBCapture {
         /// <summary>
         /// Capture Stop Routine with Unity resource release
         /// </summary>
-        public void StopCapture() {
-            if (captureStarted != screenshotStarted) {
+        public void StopCapture()
+        {
+            if (captureStarted != screenshotStarted)
+            {
 
                 fbc_stopCapture();
 
                 // Release textures & material
-                if (equirectTexture) {
+                if (equirectTexture)
+                {
                     Destroy(equirectTexture);
                     equirectTexture = null;
                 }
 
-                if (depthEquirectTexture) {
+                if (depthEquirectTexture)
+                {
                     Destroy(depthEquirectTexture);
                     depthEquirectTexture = null;
                 }
 
-                if (outputTexture) {
+                if (outputTexture)
+                {
                     Destroy(outputTexture);
                     outputTexture = null;
                 }
 
-                if (cubemapTexture) {
+                if (cubemapTexture)
+                {
                     Destroy(cubemapTexture);
                     cubemapTexture = null;
                 }
 
-                if (depthCubemapTexture) {
+                if (depthCubemapTexture)
+                {
                     Destroy(depthCubemapTexture);
                     depthCubemapTexture = null;
                 }
 
-                if (equirectMaterial) {
+                if (equirectMaterial)
+                {
                     Destroy(equirectMaterial);
                     equirectMaterial = null;
                 }
@@ -991,27 +1118,35 @@ namespace FBCapture {
             }
         }
 
-        private IEnumerator ScreenBufferBlit(string fullSavePath, RenderTexture src, RenderTexture dst) {
+        private IEnumerator ScreenBufferBlit(string fullSavePath, RenderTexture src, RenderTexture dst)
+        {
             yield return new WaitForEndOfFrame();
 
-            if (captureStarted || screenshotStarted) {
+            if (captureStarted || screenshotStarted)
+            {
                 RenderTexture active = RenderTexture.active;
 
-                if (captureMode == CAPTURE_MODE._360_CAPTURE) {
-                    if (projectionType == PROJECTION_TYPE.EQUIRECT) {
+                if (captureMode == CAPTURE_MODE._360_CAPTURE)
+                {
+                    if (projectionType == PROJECTION_TYPE.EQUIRECT)
+                    {
                         // convert to equirectangular
                         equirectMaterial.SetTexture("_CubeTex", cubemapTexture);
                         equirectMaterial.SetVector("_SphereScale", sphereScale);
                         equirectMaterial.SetVector("_SphereOffset", sphereOffset);
 
-                        if (includeCameraRotation) {
+                        if (includeCameraRotation)
+                        {
                             // cubemaps are always rendered along axes, so we do rotation by rotating the cubemap lookup
                             equirectMaterial.SetMatrix("_CubeTransform", Matrix4x4.TRS(Vector3.zero, transform.rotation, Vector3.one));
-                        } else {
+                        }
+                        else
+                        {
                             equirectMaterial.SetMatrix("_CubeTransform", Matrix4x4.identity);
                         }
 
-                        if (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE) {
+                        if (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE)
+                        {
                             // equirect RGB texture copy
                             Graphics.Blit(src, equirectTexture, equirectMaterial);
                             Graphics.CopyTexture(equirectTexture, 0, 0, 0, 0, outputWidth, outputHeight,
@@ -1022,21 +1157,28 @@ namespace FBCapture {
                             Graphics.Blit(src, depthEquirectTexture, equirectMaterial);
                             Graphics.CopyTexture(depthEquirectTexture, 0, 0, 0, 0, outputWidth, outputHeight,
                                                  outputTexture, 0, 0, 0, 0);
-                        } else {
+                        }
+                        else
+                        {
                             // equirect RGB texture copy
                             Graphics.Blit(src, equirectTexture, equirectMaterial);
                             Graphics.CopyTexture(equirectTexture, 0, 0, 0, 0, outputWidth, outputHeight,
                                                  outputTexture, 0, 0, 0, 0);
                         }
-                    } else if (projectionType == PROJECTION_TYPE.CUBEMAP) {
+                    }
+                    else if (projectionType == PROJECTION_TYPE.CUBEMAP)
+                    {
                         cubemapMaterial.SetTexture("_CubeTex", cubemapTexture);
                         cubemapMaterial.SetVector("_SphereScale", sphereScale);
                         cubemapMaterial.SetVector("_SphereOffset", sphereOffset);
 
-                        if (includeCameraRotation) {
+                        if (includeCameraRotation)
+                        {
                             // cubemaps are always rendered along axes, so we do rotation by rotating the cubemap lookup
                             cubemapMaterial.SetMatrix("_CubeTransform", Matrix4x4.TRS(Vector3.zero, transform.rotation, Vector3.one));
-                        } else {
+                        }
+                        else
+                        {
                             cubemapMaterial.SetMatrix("_CubeTransform", Matrix4x4.identity);
                         }
 
@@ -1057,16 +1199,20 @@ namespace FBCapture {
                         Graphics.Blit(cubemapRenderTarget, outputTexture);
 
                     }
-                } else {
+                }
+                else
+                {
                     Graphics.Blit(src, outputTexture);
                 }
                 RenderTexture.active = active;
-                if (screenshotStarted) {
+                if (screenshotStarted)
+                {
                     yield return new WaitUntil(() => screenshotReady);
                     screenshotReady = false;
 
                     FBCAPTURE_STATUS status = fbc_saveScreenShot(outputTexture.GetNativeTexturePtr());
-                    if (status != FBCAPTURE_STATUS.OK) {
+                    if (status != FBCAPTURE_STATUS.OK)
+                    {
                         OnError(CAPTURE_ERROR.SCREENSHOT_FAILED, status);
                     }
                     StopCapture();
@@ -1075,7 +1221,8 @@ namespace FBCapture {
             }
         }
 
-        private void RenderCubeFace(CubemapFace face, float x, float y, float w, float h) {
+        private void RenderCubeFace(CubemapFace face, float x, float y, float w, float h)
+        {
             // Texture coordinates for displaying each cube map face
             Vector3[] faceTexCoords =
             {
@@ -1133,13 +1280,15 @@ namespace FBCapture {
             GL.PopMatrix();
         }
 
-        private void OnCaptureStarted(CAPTURE_TYPE captureType) {
+        private void OnCaptureStarted(CAPTURE_TYPE captureType)
+        {
             captureStarted = true;
             captureStartedType = captureType;
             Debug.Log("Capture started");
         }
 
-        private void CaptureStatusLog(CAPTURE_ERROR error, FBCAPTURE_STATUS? captureStatus) {
+        private void CaptureStatusLog(CAPTURE_ERROR error, FBCAPTURE_STATUS? captureStatus)
+        {
             Debug.Log("Capture SDK Error Occured of type: " + error + " [Error code: " + captureStatus + " ] \n" +
                       "Please check FBCaptureSDK.txt log file for more information");
         }
@@ -1149,8 +1298,10 @@ namespace FBCapture {
         /// </summary>
         /// <param name="width">  Encoding Resolution - width </param>
         /// <param name="height"> Encoding Resolution - height </param>
-        private void CreateRenderTextures(int width, int height) {
-            if (captureStarted) {
+        private void CreateRenderTextures(int width, int height)
+        {
+            if (captureStarted)
+            {
                 Debug.Log("Capture is already started. You can't resize texture and generate new texture");
                 return;
             }
@@ -1162,12 +1313,15 @@ namespace FBCapture {
             outputTexture.hideFlags = HideFlags.HideAndDontSave;
             outputTexture.Create();
 
-            if (captureMode == CAPTURE_MODE._360_CAPTURE) {
-                if (projectionType == PROJECTION_TYPE.EQUIRECT) {
+            if (captureMode == CAPTURE_MODE._360_CAPTURE)
+            {
+                if (projectionType == PROJECTION_TYPE.EQUIRECT)
+                {
                     equirectTexture = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32);
                     equirectTexture.hideFlags = HideFlags.HideAndDontSave;
                     equirectTexture.Create();
-                    if (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE) {
+                    if (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE)
+                    {
                         depthEquirectTexture = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32);
                         depthEquirectTexture.hideFlags = HideFlags.HideAndDontSave;
                         depthEquirectTexture.Create();
@@ -1175,7 +1329,9 @@ namespace FBCapture {
 
                     // Create equirect material
                     equirectMaterial = CreateMaterial(equirectShader, equirectMaterial);
-                } else if (projectionType == PROJECTION_TYPE.CUBEMAP) {
+                }
+                else if (projectionType == PROJECTION_TYPE.CUBEMAP)
+                {
                     cubemapRenderTarget = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32);
                     cubemapRenderTarget.hideFlags = HideFlags.HideAndDontSave;
                     cubemapMaterial = CreateMaterial(cubemapShader, cubemapMaterial);
@@ -1190,7 +1346,8 @@ namespace FBCapture {
                 cubemapTexture.isCubemap = true;
                 cubemapTexture.hideFlags = HideFlags.HideAndDontSave;
 #endif
-                if (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE) {
+                if (captureTextureFormat == CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE)
+                {
                     depthCubemapTexture = new RenderTexture(cubemapSize, cubemapSize, 0);
 #if UNITY_5_4_OR_NEWER
                     depthCubemapTexture.dimension = UnityEngine.Rendering.TextureDimension.Cube;
@@ -1209,8 +1366,10 @@ namespace FBCapture {
         /// <param name="s"> shader code </param>
         /// <param name="m2Create"> material </param>
         /// <returns></returns>
-        protected Material CreateMaterial(Shader s, Material m2Create) {
-            if (!s) {
+        protected Material CreateMaterial(Shader s, Material m2Create)
+        {
+            if (!s)
+            {
                 Debug.Log("Missing shader in " + ToString());
                 return null;
             }
@@ -1218,7 +1377,8 @@ namespace FBCapture {
             if (m2Create && (m2Create.shader == s) && (s.isSupported))
                 return m2Create;
 
-            if (!s.isSupported) {
+            if (!s.isSupported)
+            {
                 return null;
             }
 
@@ -1229,61 +1389,75 @@ namespace FBCapture {
         }
 
 
-        void OnRenderImage(RenderTexture src, RenderTexture dst) {
+        void OnRenderImage(RenderTexture src, RenderTexture dst)
+        {
             StartCoroutine(ScreenBufferBlit(null, src, dst));
         }
 
-        void OnDestroy() {
+        void OnDestroy()
+        {
             StopCapture();
         }
 
-        void OnApplicationQuit() {
+        void OnApplicationQuit()
+        {
             StopCapture();
         }
 
-        public bool IsCaptureInProgress() {
+        public bool IsCaptureInProgress()
+        {
             return captureStarted;
         }
 
-        public UInt32 GetMicDevicesCount() {
+        public UInt32 GetMicDevicesCount()
+        {
             fbc_enumerateMicDevices();
             return fbc_getMicDevicesCount();
         }
 
-        public string GetMicDeviceName(UInt32 index) {
+        public string GetMicDeviceName(UInt32 index)
+        {
             return fbc_getMicDeviceName(index);
         }
 
-        public void SetMicDevice(UInt32 index) {
+        public void SetMicDevice(UInt32 index)
+        {
             fbc_setMicDevice(index);
         }
 
-        public void UnsetMicDevice() {
+        public void UnsetMicDevice()
+        {
             fbc_unsetMicDevice();
         }
 
-        public UInt32 GetCameraDevicesCount() {
+        public UInt32 GetCameraDevicesCount()
+        {
             fbc_enumerateCameraDevices();
             return fbc_getCameraDevicesCount();
         }
 
-        public string GetCameraDeviceName(UInt32 index) {
+        public string GetCameraDeviceName(UInt32 index)
+        {
             return fbc_getCameraDeviceName(index);
         }
 
-        public void SetCameraDevice(UInt32 index) {
+        public void SetCameraDevice(UInt32 index)
+        {
             fbc_setCameraDevice(index);
         }
 
-        public void UnsetCameraDevice() {
+        public void UnsetCameraDevice()
+        {
             fbc_unsetCameraDevice();
         }
 
-        public void SetCameraEnabledDuringCapture(bool enabled) {
+        public void SetCameraEnabledDuringCapture(bool enabled)
+        {
             fbc_setCameraEnabledDuringCapture(enabled);
         }
 
-        public void SetCameraOverlaySettings(float widthPercentage, UInt32 viewPortTopLeftX, UInt32 viewPortTopLeftY) {
+        public void SetCameraOverlaySettings(float widthPercentage, UInt32 viewPortTopLeftX, UInt32 viewPortTopLeftY)
+        {
             fbc_setCameraOverlaySettings(widthPercentage, viewPortTopLeftX, viewPortTopLeftY);
         }
 
