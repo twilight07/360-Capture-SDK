@@ -1,5 +1,15 @@
 # FBCAPTURE SDK 2.25 DOCUMENTATION
 
+## Add UPM Support
+Fork source maked Facebook.
+I add package.json and File organization.
+You can import for Package manager in 2018.3 later.
+You add this in Manifest.json.
+```
+"jp.twilight07.360-capture-sdk": "https://github.com/twilight07/360-Capture-SDK.git#upm"
+```
+This package is BSD License in accordance with fork source.
+
 ## Release Note
 
 * Fixed creating DirectX device on wrong GPU at multiple GPU environment
