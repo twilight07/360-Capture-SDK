@@ -1,0 +1,9 @@
+{
+    "name": "jp.twilight07.360-capture-sdk",
+    "displayName": "360-Capture-SDK",
+    "version": "2.2.5",
+    "unity": "2018.3.8f1",
+    "description": "Fork source maked Facebook. I add package.json and File organization.\nThis package is BSD License in accordance with fork source.\n A developer focused sample SDK that allows game and virtual Reality devs to be able to easily and quickly integrate 360 photo/video capture capability into their game apps.\n ",
+    "keywords": [],
+    "category": ""
+}
