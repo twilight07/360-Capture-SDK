@@ -1,3 +1,14 @@
+## Add UPM Support
+Fork source maked Facebook.
+I add package.json and File organization.
+You can import for Package manager in 2018.3 later.
+You add this in Manifest.json.
+```
+"jp.twilight07.360-capture-sdk": "https://github.com/twilight07/360-Capture-SDK.git#upm"
+```
+This package is BSD License in accordance with fork source.
+
+
 # Contributing to 360 Capture SDK
 We want to make contributing to this project as easy and transparent as
 possible.
